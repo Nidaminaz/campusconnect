@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Registration | CampusConnect</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f6fc;
+            color: #192c59;
+        }
+
+        nav {
+            background: #192c59;
+            color: white;
+            padding: 18px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        nav .back-link {
+            font-size: 16px;
+        }
+
+        .container {
+            width: min(92%, 550px);
+            margin: 50px auto;
+            background: white;
+            padding: 35px;
+            border-radius: 18px;
+            box-shadow: 0 12px 35px rgba(23, 42, 80, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+            font-size: 30px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #62738c;
+            margin-bottom: 28px;
+        }
+
+        .error-message {
+            background: #ffe8e8;
+            color: #c62828;
+            border: 1px solid #f5b5b5;
+            padding: 13px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        label {
+            display: block;
+            margin: 17px 0 7px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ccd5e4;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        input:focus {
+            outline: 2px solid #9dbbff;
+            border-color: #2864ed;
+        }
+
+        input[readonly] {
+            background: #edf2ff;
+            color: #192c59;
+            font-weight: bold;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 27px;
+            padding: 15px;
+            background: #2864ed;
+            color: white;
+            border: none;
+            border-radius: 9px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #194bc4;
+        }
+
+        .back-home {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #2864ed;
+            text-decoration: none;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px 20px;
+                margin: 30px auto;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a th:href="@{/student/dashboard}">CampusConnect</a>
+        <a class="back-link" th:href="@{/student/dashboard}">Dashboard</a>
+    </nav>
+
+    <main class="container">
+
+               <h1>Event Registration</h1>
+        <p class="subtitle">Confirm your details to register for this event.</p>
+
+        <div class="error-message" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+        <form th:action="@{/student/register/{id}(id=${event.id})}" method="post">
+
+            <label>Full Name</label>
+            <input type="text" th:value="${studentName}" readonly>
+
+            <label>Email Address</label>
+            <input type="email" th:value="${studentEmail}" readonly>
+
+            <label for="department">Department</label>
+            <input type="text" id="department" name="department"
+                   placeholder="e.g. Computer Science" maxlength="100" required>
+
+            <label>Selected Event</label>
+            <input type="text" th:value="${event.eventName}" readonly>
+
+            <label>Date &amp; Venue</label>
+            <input type="text" th:value="${event.eventDate} + ' - ' + ${event.venue}" readonly>
+
+            <button type="submit">Submit Registration</button>
+        </form>
+
+        <a class="back-home" th:href="@{/student/dashboard}">Back to Dashboard</a>
+
+    </main>
+
+</body>
+</html>

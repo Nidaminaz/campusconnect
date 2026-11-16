@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit Event | CampusConnect</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f3f6fc;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 25px;
+}
+
+.card {
+    width: 100%;
+    max-width: 550px;
+    padding: 35px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(23,42,80,0.08);
+}
+
+h2 {
+    color: #192c59;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    color: #62738c;
+    margin-bottom: 20px;
+}
+
+.error {
+    background: #ffe8e8;
+    color: #c62828;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.info {
+    background: #e6edff;
+    color: #2454c5;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+label {
+    display: block;
+    margin: 16px 0 8px;
+    color: #192c59;
+    font-weight: bold;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #d5ddea;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: Arial, sans-serif;
+}
+
+textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border-color: #2864ed;
+}
+
+.hint {
+    color: #62738c;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    margin-top: 25px;
+    border: none;
+    border-radius: 8px;
+    background: #2864ed;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #194bc4;
+}
+
+.back-link {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #2864ed;
+    text-decoration: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <h2>✏️ Edit Event</h2>
+
+    <p class="subtitle">
+        Change the event details. Registered students are notified
+        if the name, date or venue changes.
+    </p>
+
+    <p class="error"
+       th:if="${errorMessage}"
+       th:text="${errorMessage}">
+    </p>
+
+    <p class="info">
+        Currently registered:
+        <strong th:text="${event.registeredCount}">0</strong>
+        student(s)
+    </p>
+
+    <form th:action="@{/organizer/events/{id}/edit(id=${event.id})}"
+          method="post">
+
+        <label>Event Name</label>
+        <input type="text"
+               name="eventName"
+               th:value="${event.eventName}"
+               required>
+
+        <label>Event Description</label>
+        <textarea name="description"
+                  th:text="${event.description}"
+                  required></textarea>
+
+        <label>Event Date</label>
+        <input type="date"
+               name="eventDate"
+               th:value="${event.eventDate}"
+               required>
+
+        <label>Event Venue</label>
+        <input type="text"
+               name="venue"
+               th:value="${event.venue}"
+               required>
+
+        <label>Maximum Seats (optional)</label>
+        <input type="number"
+               name="maxSeats"
+               min="1"
+               th:value="${event.maxSeats}"
+               placeholder="Leave empty for no limit">
+        <p class="hint">
+            It cannot be lower than the number of students already registered.
+        </p>
+
+        <button type="submit">Save Changes</button>
+
+    </form>
+
+    <a class="back-link"
+       th:href="@{/organizer/dashboard}">
+       ← Back to Organizer Dashboard
+    </a>
+
+</div>
+
+</body>
+</html>

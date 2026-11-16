@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CampusConnect | College Events</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #1f2937;
+            background: #f3f6fc;
+            line-height: 1.6;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            min-height: 70px;
+            background: #192c59;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 7%;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 27px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .nav-links a:hover {
+            color: #c7d8ff;
+        }
+
+        /* Home Section */
+
+        .hero {
+            min-height: 100vh;
+            padding: 110px 20px 50px;
+            background: linear-gradient(115deg, #1b3268, #2864ed);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: clamp(34px, 4.2vw, 56px);
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            max-width: 850px;
+            margin-bottom: 25px;
+        }
+
+        .login-options {
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .login-card {
+            width: 240px;
+            padding: 28px 22px;
+            background: white;
+            color: #192c59;
+            border-radius: 16px;
+            text-decoration: none;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            transition: transform 0.2s;
+        }
+
+        .login-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .login-icon {
+            font-size: 43px;
+            margin-bottom: 12px;
+        }
+
+        .login-card h3 {
+            font-size: 21px;
+            margin-bottom: 8px;
+        }
+
+        .login-card span {
+            color: #62738c;
+            font-size: 14px;
+        }
+
+        /* Events Section */
+
+        .events-section {
+            min-height: 100vh;
+            padding: 105px 4.3% 75px;
+            background: #f3f6fc;
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 44px;
+        }
+
+        .section-heading h2,
+        .about-section h2 {
+            font-size: clamp(30px, 3vw, 42px);
+            color: #192c59;
+            margin-bottom: 10px;
+        }
+
+        .section-heading p,
+        .about-section p {
+            color: #62738c;
+            font-size: 19px;
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 28px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .event-card {
+            background: white;
+            padding: 38px 36px 32px;
+            border: 1px solid #e0e6ef;
+            border-radius: 22px;
+            box-shadow: 0 14px 35px rgba(23,42,80,0.08);
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            transition: transform 0.2s;
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .event-icon {
+            font-size: 43px;
+            margin-bottom: 17px;
+        }
+
+        .event-card h3 {
+            font-size: 25px;
+            color: #192c59;
+            margin-bottom: 15px;
+        }
+
+        .event-card p {
+            color: #62738c;
+            font-size: 17px;
+            margin-bottom: 14px;
+        }
+
+        .register-button {
+            display: block;
+            width: 100%;
+            background: #2864ed;
+            color: white;
+            padding: 14px 18px;
+            border-radius: 11px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 17px;
+            font-weight: bold;
+            margin-top: auto;
+        }
+
+        .register-button:hover {
+            background: #194bc4;
+        }
+        .closed-button {
+            display: block;
+            width: 100%;
+            background: #e5e7eb;
+            color: #4b5563;
+            padding: 14px 18px;
+            border-radius: 11px;
+            text-align: center;
+            font-size: 17px;
+            font-weight: bold;
+            margin-top: auto;
+        }
+
+        /* About Section */
+
+        .about-section {
+            min-height: 100vh;
+            padding: 100px 8%;
+            background: #e8efff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .about-section p {
+            max-width: 950px;
+            line-height: 1.9;
+        }
+
+        /* Footer */
+
+        footer {
+            background: #192c59;
+            color: white;
+            text-align: center;
+            padding: 27px 15px;
+            font-size: 16px;
+        }
+
+        /* Responsive Design */
+
+        @media (max-width: 950px) {
+            .events-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 620px) {
+
+            nav {
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            .logo {
+                font-size: 24px;
+            }
+
+            .nav-links {
+                gap: 20px;
+            }
+
+            .hero {
+                padding-top: 130px;
+            }
+
+            .events-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .event-card {
+                padding: 30px 25px;
+            }
+
+            .login-options {
+                width: 100%;
+                padding: 0 15px;
+            }
+
+            .login-card {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+
+    <nav>
+
+        <a class="logo" th:href="@{/}">
+            CampusConnect
+        </a>
+
+        <div class="nav-links">
+            <a th:href="@{/}">Home</a>
+            <a href="#events">Events</a>
+            <a href="#about">About</a>
+        </div>
+
+    </nav>
+
+
+    <!-- Home Section -->
+
+    <section class="hero" id="home">
+
+        <h1>Discover. Participate. Connect.</h1>
+
+        <p>
+            Find exciting college events, register for activities,
+            and stay updated so you never miss an event.
+        </p>
+
+        <h2>Welcome to CampusConnect</h2>
+
+        <div class="login-options">
+
+            <!-- Student Login -->
+            <a class="login-card" th:href="@{/student/login}">
+
+                <div class="login-icon">🎓</div>
+
+                <h3>Student Login</h3>
+
+                <span>
+                    Create an account and explore college events
+                </span>
+
+            </a>
+
+
+            <!-- Organizer Login -->
+            <a class="login-card" th:href="@{/organizer/login}">
+
+                <div class="login-icon">📅</div>
+
+                <h3>Organizer Login</h3>
+
+                <span>
+                    Add and publish college events
+                </span>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- Events Section -->
+
+    <section class="events-section" id="events">
+
+        <div class="section-heading">
+
+            <h2>Explore Campus Events</h2>
+
+            <p>
+                Discover opportunities to learn, compete and connect.
+            </p>
+
+        </div>
+
+        <div class="events-grid">
+
+            <!-- Events from MySQL -->
+
+            <article class="event-card"
+                     th:each="event : ${events}">
+
+                <div class="event-icon">🎉</div>
+
+                <h3 th:text="${event.eventName}"></h3>
+
+                <p th:text="${event.description}"></p>
+
+                <p>
+                    <strong>Date:</strong>
+                    <span th:text="${event.eventDate}"></span>
+                </p>
+
+                <p>
+                    <strong>Venue:</strong>
+                    <span th:text="${event.venue}"></span>
+                </p>
+
+                 <p>
+                    <strong>Registration closes:</strong>
+                    <span th:text="${event.effectiveDeadline}"></span>
+                </p>
+
+                <span class="closed-button"
+                      th:if="${event.registrationClosed}">
+                    Registration Closed
+                </span>
+
+                <!-- Login is required to register -->
+                <a class="register-button"
+                   th:unless="${event.registrationClosed}"
+                   th:href="@{/student/register/{id}(id=${event.id})}">
+
+                    Register Now
+
+                </a>
+
+            </article>
+
+            <p th:if="${#lists.isEmpty(events)}"
+               style="text-align:center;grid-column:1/-1;color:#62738c;">
+
+                No events have been published yet.
+
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- About Section -->
+
+    <section class="about-section" id="about">
+
+        <h2>About CampusConnect</h2>
+
+        <p>
+            CampusConnect is a college event management website
+            designed to help students discover campus activities,
+            participate in events and connect with their college
+            community through exciting opportunities.
+
+            Organizers can publish events, while students can
+            explore and register for activities through one platform.
+        </p>
+
+    </section>
+
+
+    <!-- Footer -->
+
+    <footer>
+
+        <p>&copy; 2026 CampusConnect. All rights reserved.</p>
+
+        <p>Connecting Students Through Campus Events</p>
+
+    </footer>
+
+</body>
+</html>

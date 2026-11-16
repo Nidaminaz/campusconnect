@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Signup | CampusConnect</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f3f6fc;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.signup-card {
+    background: white;
+    width: 100%;
+    max-width: 430px;
+    padding: 35px;
+    border-radius: 18px;
+    box-shadow: 0 12px 35px rgba(23,42,80,0.1);
+}
+
+h2 {
+    text-align: center;
+    color: #192c59;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #62738c;
+    margin-bottom: 22px;
+}
+
+label {
+    display: block;
+    color: #192c59;
+    font-weight: bold;
+    margin-bottom: 7px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d5ddea;
+    border-radius: 8px;
+    margin-bottom: 17px;
+    font-size: 15px;
+}
+
+button {
+    width: 100%;
+    padding: 13px;
+    background: #2864ed;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #194bc4;
+}
+
+.error {
+    color: #c62828;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.bottom {
+    margin-top: 20px;
+    text-align: center;
+    color: #62738c;
+}
+
+a {
+    color: #2864ed;
+    text-decoration: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="signup-card">
+
+    <h2>Student Registration 🎓</h2>
+
+    <p class="subtitle">
+        Create your CampusConnect account
+    </p>
+
+    <p class="error"
+       th:if="${error}"
+       th:text="${error}">
+    </p>
+
+    <form th:action="@{/signup}" method="post">
+
+        <label>Full Name</label>
+
+        <input type="text"
+               name="fullName"
+               placeholder="Enter your full name"
+               required>
+
+        <label>Email Address</label>
+
+        <input type="email"
+               name="email"
+               placeholder="Enter your email"
+               required>
+
+        <label>Password</label>
+
+        <input type="password"
+               name="password"
+               placeholder="Create a password"
+               minlength="8"
+               required>
+
+        <button type="submit">Create Account</button>
+
+    </form>
+
+    <div class="bottom">
+        Already registered?
+        <a th:href="@{/student/login}">Login</a>
+    </div>
+
+    <div class="bottom">
+        <a th:href="@{/}">Back to Home</a>
+    </div>
+
+</div>
+
+</body>
+</html>

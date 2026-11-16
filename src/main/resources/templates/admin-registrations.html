@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Registrations | CampusConnect</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f6fc;
+            color: #192c59;
+        }
+
+        nav {
+            background: #192c59;
+            color: white;
+            padding: 20px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        nav h2 {
+            margin: 0;
+            font-size: 25px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1400px;
+            margin: 40px auto;
+        }
+
+        .page-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .page-heading h1 {
+            margin: 0 0 8px;
+            font-size: 32px;
+        }
+
+        .page-heading p {
+            color: #66758e;
+            margin: 0;
+        }
+
+        .count-card {
+            background: white;
+            padding: 20px 25px;
+            border-radius: 14px;
+            box-shadow: 0 5px 20px rgba(25, 44, 89, 0.06);
+            min-width: 170px;
+        }
+
+        .count-card span {
+            display: block;
+            color: #66758e;
+            margin-bottom: 8px;
+        }
+
+        .count-card strong {
+            font-size: 30px;
+            color: #2864ed;
+        }
+
+        .table-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(25, 44, 89, 0.07);
+        }
+
+        .table-heading {
+            padding: 22px 25px;
+            border-bottom: 1px solid #e6ebf3;
+        }
+
+        .table-heading h2 {
+            margin: 0;
+            font-size: 21px;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        thead {
+            background: #edf2ff;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 17px 20px;
+            border-bottom: 1px solid #e8edf5;
+            font-size: 14px;
+        }
+
+        th {
+            color: #192c59;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        td {
+            color: #53647e;
+        }
+
+        tbody tr:hover {
+            background: #f8faff;
+        }
+
+        .event-badge {
+            display: inline-block;
+            background: #e6edff;
+            color: #2454c5;
+            padding: 7px 10px;
+            border-radius: 7px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 55px 20px;
+            color: #66758e;
+        }
+
+        .empty-state h3 {
+            color: #192c59;
+            margin-bottom: 10px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #66758e;
+        }
+
+        @media (max-width: 600px) {
+            nav h2 {
+                font-size: 20px;
+            }
+
+            .container {
+                margin: 25px auto;
+            }
+
+            .page-heading h1 {
+                font-size: 26px;
+            }
+
+            .count-card {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <h2>CampusConnect</h2>
+        <a th:href="@{/organizer/dashboard}">Back to Dashboard</a>
+    </nav>
+
+    <main class="container">
+
+        <section class="page-heading">
+            <div>
+                <h1>Student Registrations</h1>
+                <p th:if="${showOrganizer}">
+                    All registrations for every organizer's events.
+                </p>
+                <p th:unless="${showOrganizer}">
+                    Students registered for the events you created.
+                </p>
+            </div>
+
+            <div class="count-card">
+                <span>Total Registrations</span>
+                <strong th:text="${#lists.size(registrations)}">0</strong>
+            </div>
+        </section>
+
+        <section class="table-card">
+
+            <div class="table-heading">
+                <h2>Registered Students</h2>
+            </div>
+
+            <div th:if="${#lists.isEmpty(registrations)}"
+                 class="empty-state">
+                <h3>No registrations yet</h3>
+                <p>Registrations will appear here.</p>
+            </div>
+
+            <div class="table-wrapper"
+                 th:unless="${#lists.isEmpty(registrations)}">
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Student Name</th>
+                            <th>Email</th>
+                            <th>Department</th>
+                            <th>Event</th>
+                            <th th:if="${showOrganizer}">Organizer</th>
+                            <th>Registration Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr th:each="registration : ${registrations}">
+                            <td th:text="${registration.id}">1</td>
+
+                            <td th:text="${registration.studentName}">
+                                Student Name
+                            </td>
+
+                            <td th:text="${registration.email}">
+                                student@example.com
+                            </td>
+
+                            <td th:text="${registration.department}">
+                                CSE
+                            </td>
+
+                            <td>
+                                <span class="event-badge"
+                                      th:text="${registration.eventName}">
+                                    Event Name
+                                </span>
+                            </td>
+
+                            <td th:if="${showOrganizer}"
+                                th:text="${registration.eventId != null ? eventOrganizers[registration.eventId] : '-'}">
+                                organizer@example.com
+                            </td>
+
+                            <td th:text="${registration.registeredAt}">
+                                Registration Date
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        &copy; 2026 CampusConnect. All rights reserved.
+    </footer>
+
+</body>
+</html>

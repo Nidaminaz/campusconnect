@@ -1,0 +1,229 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Login | CampusConnect</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f3f6fc;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #1f2937;
+        }
+
+        .login-card {
+            background: white;
+            width: 90%;
+            max-width: 525px;
+            padding: 55px 48px;
+            border-radius: 25px;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        h1 {
+            color: #163568;
+            margin-bottom: 12px;
+            font-size: 30px;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 20px;
+            margin-bottom: 28px;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            color: #163568;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 11px;
+            font-size: 17px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #2864ed;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: #2864ed;
+            color: white;
+            border: none;
+            border-radius: 11px;
+            font-size: 19px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .login-btn:hover {
+            background: #174bc4;
+        }
+
+        a {
+            color: #2864ed;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .forgot {
+            text-align: right;
+            margin-bottom: 22px;
+            font-size: 15px;
+        }
+
+        .bottom-links {
+            margin-top: 22px;
+            color: #64748b;
+            font-size: 18px;
+        }
+
+        .home-link {
+            display: block;
+            margin-top: 22px;
+        }
+
+        .error, .success {
+            margin-bottom: 18px;
+            font-size: 16px;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .success {
+            color: #16803c;
+        }
+
+        @media(max-width: 500px) {
+            .login-card {
+                padding: 35px 22px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-card">
+
+        <h1>Student Login 🎓</h1>
+
+        <p class="subtitle">Welcome to CampusConnect</p>
+
+        <!-- Login error message -->
+        <p class="error" th:if="${param.error}">
+            Invalid student email or password.
+        </p>
+
+        <!-- Registration success message -->
+        <p class="success" th:if="${param.registered}">
+            Account created successfully! Please log in.
+        </p>
+
+        <!-- Password reset success message -->
+        <p class="success" th:if="${param.reset}">
+            Password updated successfully! Please log in.
+        </p>
+
+        <!-- Student Login Form -->
+        <form th:action="@{/login}" method="post">
+
+            <!-- Identifies student login -->
+            <input type="hidden" name="loginType" value="student">
+
+            <!-- CSRF Token -->
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+
+            <div class="form-group">
+
+                <label>Email Address</label>
+
+                <input type="email"
+                       name="email"
+                       placeholder="Enter your email"
+                       required>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Password</label>
+
+                <input type="password"
+                       name="password"
+                       placeholder="Enter your password"
+                       required>
+
+            </div>
+
+            <div class="forgot">
+
+                <a th:href="@{/forgot-password}">
+                    Forgot Password?
+                </a>
+
+            </div>
+
+            <button type="submit" class="login-btn">
+                Student Login
+            </button>
+
+        </form>
+
+        <div class="bottom-links">
+
+            New student?
+
+            <a th:href="@{/signup}">
+                Create an account
+            </a>
+
+            <a class="home-link" th:href="@{/}">
+                Back to Home
+            </a>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

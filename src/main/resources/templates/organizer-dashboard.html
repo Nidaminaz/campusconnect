@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Organizer Dashboard | CampusConnect</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f3f6fc;
+    color: #1f2937;
+}
+
+header {
+    background: #192c59;
+    color: white;
+    padding: 20px 6%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h2 {
+    color: white;
+}
+
+button, .add-btn {
+    background: #2864ed;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.secondary-btn {
+    background: #192c59;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.top-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+h2, h3 {
+    color: #192c59;
+}
+
+.event-card {
+    background: white;
+    padding: 25px;
+    margin-bottom: 20px;
+    border-radius: 14px;
+    box-shadow: 0 5px 20px rgba(23,42,80,0.07);
+}
+
+.event-card h3 {
+    margin-bottom: 12px;
+}
+
+.event-card p {
+    margin-bottom: 8px;
+    color: #62738c;
+}
+
+.tag {
+    display: inline-block;
+    padding: 3px 10px;
+    margin-left: 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+.tag-finished {
+    background: #e5e7eb;
+    color: #4b5563;
+}
+
+.tag-full {
+    background: #ffe8e8;
+    color: #c62828;
+}
+
+.tag-closed {
+    background: #fff1d6;
+    color: #b45309;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.actions form {
+    margin: 0;
+}
+
+.edit-btn {
+    padding: 9px 16px;
+    font-size: 14px;
+}
+
+.delete-btn {
+    padding: 9px 16px;
+    font-size: 14px;
+    background: #e53935;
+}
+
+.delete-btn:hover {
+    background: #c62828;
+}
+
+.success {
+    color: #21834a;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.error {
+    color: #c62828;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.empty {
+    color: #62738c;
+    margin: 20px 0;
+}
+
+.registration-link {
+    display: inline-block;
+    margin-top: 20px;
+    color: #2864ed;
+    text-decoration: none;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h2>CampusConnect | Organizer</h2>
+
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Logout</button>
+    </form>
+</header>
+
+<div class="container">
+
+    <div class="top">
+        <div>
+            <h2>Organizer Dashboard</h2>
+            <p>Manage and publish your college events.</p>
+        </div>
+
+        <div class="top-buttons">
+
+            <!-- Only the main organizer sees this button -->
+            <a th:if="${canAddOrganizer}"
+               th:href="@{/organizer/add-organizer}"
+               class="add-btn secondary-btn">
+                + Add Organizer
+            </a>
+
+            <a th:href="@{/organizer/add-event}" class="add-btn">
+                + Add New Event
+            </a>
+
+        </div>
+    </div>
+
+    <p class="success"
+       th:if="${successMessage}"
+       th:text="${successMessage}">
+    </p>
+
+    <p class="error"
+       th:if="${errorMessage}"
+       th:text="${errorMessage}">
+    </p>
+
+    <h3 th:text="${showOwner} ? 'All Events' : 'My Events'">My Events</h3>
+
+    <p class="empty" th:if="${#lists.isEmpty(events)}">
+        No events yet. Click "Add New Event" to publish one.
+    </p>
+
+    <div class="event-card" th:each="event : ${events}">
+
+        <h3>
+            <span th:text="${event.eventName}"></span>
+
+            <span class="tag tag-finished" th:if="${event.finished}">Finished</span>
+            <span class="tag tag-closed"
+                  th:if="${event.registrationClosed and !event.finished}">Registration closed</span>
+            <span class="tag tag-full" th:if="${event.full}">Full</span>
+        </h3>
+
+        <p th:text="${event.description}"></p>
+
+        <p>
+            <strong>Date:</strong>
+            <span th:text="${event.eventDate}"></span>
+        </p>
+
+        <p>
+            <strong>Registration closes:</strong>
+            <span th:text="${event.effectiveDeadline}"></span>
+        </p>
+
+        <p>
+            <strong>Venue:</strong>
+            <span th:text="${event.venue}"></span>
+        </p>
+
+        <p>
+            <strong>Registered:</strong>
+            <span th:if="${event.maxSeats != null}"
+                  th:text="${event.registeredCount} + ' of ' + ${event.maxSeats} + ' seats'"></span>
+            <span th:if="${event.maxSeats == null}"
+                  th:text="${event.registeredCount} + ' (no seat limit)'"></span>
+        </p>
+
+        <p th:if="${showOwner}">
+            <strong>Organizer:</strong>
+            <span th:text="${event.organizerEmail}"></span>
+        </p>
+
+        <div class="actions">
+
+            <a class="add-btn edit-btn"
+               th:href="@{/organizer/events/{id}/edit(id=${event.id})}">
+                ✏️ Edit
+            </a>
+
+            <form th:action="@{/organizer/events/{id}/delete(id=${event.id})}"
+                  method="post"
+                  onsubmit="return confirm('Delete this event? Its registrations will be removed and registered students will be notified. This cannot be undone.');">
+
+                <button type="submit" class="delete-btn">🗑 Delete</button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <a class="registration-link"
+       th:href="@{/organizer/registrations}">
+       View Student Registrations →
+    </a>
+
+</div>
+
+</body>
+</html>

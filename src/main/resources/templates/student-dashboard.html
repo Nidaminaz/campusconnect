@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Dashboard | CampusConnect</title>
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body { font-family: Arial, sans-serif; background: #f3f6fc; color: #1f2937; }
+
+header {
+    background: #192c59; color: white; padding: 20px 6%;
+    display: flex; justify-content: space-between; align-items: center;
+}
+header h2 { color: white; }
+
+.header-right { display: flex; align-items: center; gap: 18px; }
+
+.bell {
+    position: relative; color: white; text-decoration: none;
+    font-size: 26px; line-height: 1;
+}
+.bell .badge {
+    position: absolute; top: -8px; right: -12px; margin: 0;
+    min-width: 20px; padding: 1px 6px; font-size: 12px;
+}
+
+button, .button {
+    display: inline-block; padding: 11px 17px; background: #2864ed; color: white;
+    border: none; border-radius: 8px; text-decoration: none; cursor: pointer; font-weight: bold;
+}
+
+.container { max-width: 1150px; margin: 40px auto; padding: 0 20px; }
+.welcome { margin-bottom: 30px; }
+.welcome h2 { color: #192c59; margin-bottom: 10px; }
+.muted { color: #62738c; }
+.section-title { color: #192c59; margin: 30px 0 20px; }
+
+.events-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+
+.event-card {
+    background: white; padding: 25px; border-radius: 14px;
+    box-shadow: 0 8px 25px rgba(23,42,80,0.07);
+}
+.event-icon { font-size: 35px; margin-bottom: 12px; }
+.event-card h3 { color: #192c59; margin-bottom: 12px; }
+.event-card p { color: #62738c; margin-bottom: 12px; line-height: 1.5; }
+
+.empty { color: #62738c; padding: 15px 0; }
+
+.registration-card {
+    background: white; padding: 20px; border-radius: 10px; margin-bottom: 12px;
+    box-shadow: 0 5px 15px rgba(23,42,80,0.05);
+}
+.registration-card strong { color: #192c59; }
+
+.notice {
+    background: #ffe8e8; color: #c62828; padding: 12px 16px;
+    border-radius: 8px; margin-bottom: 20px; font-weight: bold;
+}
+
+.badge {
+    display: inline-block; min-width: 24px; padding: 2px 8px; margin-left: 8px;
+    background: #e53935; color: white; border-radius: 12px; font-size: 14px; text-align: center;
+}
+.hidden { display: none !important; }
+
+.notification-card {
+    background: white; padding: 14px 18px; border-radius: 10px; margin-bottom: 10px;
+    border-left: 5px solid #d5ddea; box-shadow: 0 4px 12px rgba(23,42,80,0.05);
+}
+.notification-card.unread { border-left-color: #2864ed; background: #f1f5ff; font-weight: bold; }
+.notification-card small { display: block; margin-top: 4px; font-weight: normal; color: #62738c; }
+
+.registered-tag {
+    display: inline-block; padding: 11px 17px; background: #dcfce7; color: #15803d;
+    border-radius: 8px; font-weight: bold;
+}
+
+.full-tag {
+    display: inline-block; padding: 11px 17px; background: #ffe8e8; color: #c62828;
+    border-radius: 8px; font-weight: bold;
+}
+
+.closed-tag {
+    display: inline-block; padding: 11px 17px; background: #fff1d6; color: #b45309;
+    border-radius: 8px; font-weight: bold;
+}
+
+/* ---------- Popup notifications (like Instagram) ---------- */
+
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 340px;
+    max-width: calc(100vw - 40px);
+}
+
+.toast {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: white;
+    border-left: 5px solid #2864ed;
+    border-radius: 12px;
+    box-shadow: 0 12px 35px rgba(23, 42, 80, 0.25);
+    cursor: pointer;
+    animation: toast-in 0.4s ease;
+}
+
+.toast.leaving {
+    animation: toast-out 0.35s ease forwards;
+}
+
+.toast-icon { font-size: 24px; line-height: 1; }
+
+.toast-body { flex: 1; min-width: 0; }
+.toast-body strong { display: block; color: #192c59; font-size: 14px; margin-bottom: 3px; }
+.toast-body p { color: #1f2937; font-size: 14px; line-height: 1.4; word-wrap: break-word; }
+.toast-body small { display: block; margin-top: 4px; color: #62738c; font-size: 12px; }
+
+.toast-close {
+    padding: 0 4px;
+    background: transparent;
+    color: #62738c;
+    font-size: 22px;
+    line-height: 1;
+    border-radius: 4px;
+}
+.toast-close:hover { color: #c62828; background: transparent; }
+
+@keyframes toast-in {
+    from { transform: translateX(120%); opacity: 0; }
+    to   { transform: translateX(0);    opacity: 1; }
+}
+@keyframes toast-out {
+    from { transform: translateX(0);    opacity: 1; }
+    to   { transform: translateX(120%); opacity: 0; }
+}
+
+@media(max-width: 850px) { .events-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media(max-width: 550px) {
+    header { padding: 15px; }
+    header h2 { font-size: 18px; }
+    .events-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- Popup notifications appear here -->
+<div id="toast-container" aria-live="polite"></div>
+
+<header>
+    <h2>CampusConnect | Student</h2>
+
+    <div class="header-right">
+
+        <a class="bell" href="#notifications" title="Notifications">
+            🔔
+            <span class="badge js-unread-count"
+                  th:classappend="${unreadCount == 0} ? 'hidden'"
+                  th:text="${unreadCount}">0</span>
+        </a>
+
+        <form th:action="@{/logout}" method="post">
+            <button type="submit">Logout</button>
+        </form>
+
+    </div>
+</header>
+
+<div class="container">
+
+    <div class="welcome">
+        <h2>Welcome to Your Student Dashboard! 🎓</h2>
+
+        <p class="muted">
+            Logged in as:
+            <strong th:text="${studentEmail}"></strong>
+        </p>
+    </div>
+
+    <p class="notice" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+
+    <!-- Notifications -->
+    <h2 class="section-title" id="notifications">
+        🔔 Notifications
+        <span class="badge js-unread-count"
+              th:if="${unreadCount > 0}"
+              th:text="${unreadCount}">0</span>
+    </h2>
+
+    <p class="empty" th:if="${#lists.isEmpty(notifications)}">
+        No notifications yet. You will be notified when a new event is scheduled.
+    </p>
+
+    <div class="notification-card"
+         th:each="n : ${notifications}"
+         th:classappend="${!n.seen} ? 'unread'">
+
+        <span th:text="${n.message}"></span>
+        <small th:text="${#temporals.format(n.createdAt, 'dd MMM yyyy, HH:mm')}"></small>
+    </div>
+
+    <form th:if="${unreadCount > 0}"
+          th:action="@{/student/notifications/read}" method="post">
+        <button type="submit">Mark all as read</button>
+    </form>
+
+    <!-- Events -->
+    <h2 class="section-title">Explore Campus Events</h2>
+
+    <p class="empty" th:if="${#lists.isEmpty(events)}">
+        No upcoming events right now.
+    </p>
+
+    <div class="events-grid">
+
+        <div class="event-card" th:each="event : ${events}">
+
+            <div class="event-icon">🎉</div>
+
+            <h3 th:text="${event.eventName}"></h3>
+
+            <p th:text="${event.description}"></p>
+
+            <p>
+                <strong>Date:</strong>
+                <span th:text="${event.eventDate}"></span>
+            </p>
+
+            <p>
+                <strong>Registration closes:</strong>
+                <span th:text="${event.effectiveDeadline}"></span>
+            </p>
+
+            <p>
+                <strong>Venue:</strong>
+                <span th:text="${event.venue}"></span>
+            </p>
+
+            <p>
+                <strong>Seats:</strong>
+                <span th:if="${event.maxSeats != null}"
+                      th:text="${event.seatsLeft} + ' left of ' + ${event.maxSeats}"></span>
+                <span th:if="${event.maxSeats == null}">Open to all</span>
+            </p>
+
+            <span class="registered-tag"
+                  th:if="${registeredEventIds.contains(event.id)}">
+                ✓ Registered
+            </span>
+
+            <span class="closed-tag"
+                  th:if="${!registeredEventIds.contains(event.id) and event.registrationClosed}">
+                Registration Closed
+            </span>
+
+            <span class="full-tag"
+                  th:if="${!registeredEventIds.contains(event.id) and !event.registrationClosed and event.full}">
+                Event Full
+            </span>
+
+            <a class="button"
+               th:if="${!registeredEventIds.contains(event.id) and !event.registrationClosed and !event.full}"
+               th:href="@{/student/register/{id}(id=${event.id})}">
+               Register Now
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- My registrations -->
+    <h2 class="section-title">My Event Registrations</h2>
+
+    <p class="empty" th:if="${#lists.isEmpty(registrations)}">
+        You have not registered for any events yet.
+    </p>
+
+    <div class="registration-card" th:each="registration : ${registrations}">
+
+        <strong th:text="${registration.eventName}"></strong>
+
+        <p class="muted">
+            Registered on:
+            <span th:text="${registration.registeredAt}"></span>
+        </p>
+
+    </div>
+
+</div>
+
+<script th:inline="javascript">
+(function () {
+
+    var STORAGE_KEY = 'shownNotifications:' + /*[[${studentEmail}]]*/ 'student';
+    var CHECK_EVERY_MS = 8000;      // ask the server every 8 seconds
+    var TOAST_VISIBLE_MS = 7000;    // popup stays for 7 seconds
+
+    // IDs already shown as a popup in this browser tab
+    var shown = [];
+    try {
+        shown = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || '[]');
+    } catch (e) {
+        shown = [];
+    }
+
+    function remember(ids) {
+        shown = shown.concat(ids).slice(-200);
+        try {
+            sessionStorage.setItem(STORAGE_KEY, JSON.stringify(shown));
+        } catch (e) { /* ignore */ }
+    }
+
+    function updateBadges(count) {
+        var badges = document.querySelectorAll('.js-unread-count');
+        for (var i = 0; i < badges.length; i++) {
+            badges[i].textContent = count;
+            if (count > 0) {
+                badges[i].classList.remove('hidden');
+            } else {
+                badges[i].classList.add('hidden');
+            }
+        }
+    }
+
+    function closeToast(toast) {
+        if (!toast || toast.classList.contains('leaving')) { return; }
+        toast.classList.add('leaving');
+        setTimeout(function () {
+            if (toast.parentNode) { toast.parentNode.removeChild(toast); }
+        }, 350);
+    }
+
+    function showToast(n) {
+        var box = document.getElementById('toast-container');
+
+        var toast = document.createElement('div');
+        toast.className = 'toast';
+
+        var icon = document.createElement('div');
+        icon.className = 'toast-icon';
+        icon.textContent = '🔔';
+
+        var body = document.createElement('div');
+        body.className = 'toast-body';
+
+        var title = document.createElement('strong');
+        title.textContent = 'CampusConnect';
+
+        var msg = document.createElement('p');
+        msg.textContent = n.message;          // textContent keeps it safe
+
+        var time = document.createElement('small');
+        time.textContent = n.time || 'just now';
+
+        body.appendChild(title);
+        body.appendChild(msg);
+        body.appendChild(time);
+
+        var close = document.createElement('button');
+        close.type = 'button';
+        close.className = 'toast-close';
+        close.textContent = '\u00D7';
+        close.setAttribute('aria-label', 'Close');
+
+        close.addEventListener('click', function (e) {
+            e.stopPropagation();
+            closeToast(toast);
+        });
+
+        // Clicking the popup opens the notification list
+        toast.addEventListener('click', function () {
+            window.location.href = window.location.pathname + '#notifications';
+            window.location.reload();
+        });
+
+        toast.appendChild(icon);
+        toast.appendChild(body);
+        toast.appendChild(close);
+        box.appendChild(toast);
+
+        setTimeout(function () { closeToast(toast); }, TOAST_VISIBLE_MS);
+    }
+
+    function check() {
+        fetch('/student/notifications/unread', {
+            headers: { 'Accept': 'application/json' },
+            credentials: 'same-origin'
+        })
+        .then(function (response) {
+            if (!response.ok) { throw new Error('bad response'); }
+            return response.json();
+        })
+        .then(function (data) {
+
+            updateBadges(data.count);
+
+            var fresh = data.items.filter(function (n) {
+                return shown.indexOf(n.id) === -1;
+            });
+
+            if (fresh.length === 0) { return; }
+
+            remember(fresh.map(function (n) { return n.id; }));
+
+            if (fresh.length > 3) {
+                showToast({
+                    message: 'You have ' + fresh.length + ' new notifications',
+                    time: 'just now'
+                });
+                return;
+            }
+
+            // Oldest first, a little gap between popups
+            fresh.reverse().forEach(function (n, index) {
+                setTimeout(function () { showToast(n); }, index * 500);
+            });
+        })
+        .catch(function () {
+            // Session expired or server busy: try again next time
+        });
+    }
+
+    check();
+    setInterval(check, CHECK_EVERY_MS);
+
+})();
+</script>
+
+</body>
+</html>
